@@ -1,0 +1,16 @@
+[
+    {
+        "question": "You’ve encountered a dense forest near the Blue Mountains, and your party is unsure how to proceed. There is a fork in the road, and you must choose a path. Which way will you go?",
+        "answer": "B",
+        "options": [
+            "A: take the northern trail",
+            "B: take the southern trail",
+            "C: turn around",
+            "D: go fishing"
+        ]
+    },
+    {
+        "question": "There's a deer. You're hungry. You know what you have to do...",
+        "answer": "bang"
+    }
+]
