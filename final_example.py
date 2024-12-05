@@ -1,3 +1,4 @@
+from game_play import GamePlayInterface
 from langchain.tools.retriever import create_retriever_tool
 from langchain_core.documents import Document
 from langchain_core.messages import SystemMessage
@@ -33,6 +34,7 @@ doc = Document(
     page_content="the northern trail, of the blue mountains, was destroyed by a flood and is no longer safe to traverse. It is recommended to take the southern trail although it is longer."
 )
 
+# TODO: I like the idea of them having to populate the index themselves but it may be worth thinking about if we set this up ahead of time.
 vectorstore = RedisVectorStore.from_documents(
     [doc],
     OpenAIEmbeddings(),
@@ -72,22 +74,28 @@ def agent(state: MessagesState):
         return {"messages": [llm_with_tools.invoke([SYS_MSG] + state["messages"])]}
 
 
-## define graph
+class ExampleAgent(GamePlayInterface):
+    def get_graph(self):
+        ## define graph
 
-# Graph
-builder = StateGraph(MessagesState)
+        # Graph
+        builder = StateGraph(MessagesState)
 
-# Add nodes
-builder.add_node("agent", agent)
-builder.add_node("tools", ToolNode(tools))  # for the tools
+        # Add nodes
+        builder.add_node("agent", agent)
+        builder.add_node("tools", ToolNode(tools))  # for the tools
 
-# Add edges
-builder.add_edge(START, "agent")
-builder.add_conditional_edges(
-    "agent",
-    # If the latest message (result) from node agent is a tool call -> tools_condition routes to tools
-    # If the latest message (result) from node agent is a not a tool call -> tools_condition routes to END
-    tools_condition,
-)
-builder.add_edge("tools", "agent")
-graph = builder.compile()
+        # Add edges
+        builder.add_edge(START, "agent")
+        builder.add_conditional_edges(
+            "agent",
+            # If the latest message (result) from node agent is a tool call -> tools_condition routes to tools
+            # If the latest message (result) from node agent is a not a tool call -> tools_condition routes to END
+            tools_condition,
+        )
+        builder.add_edge("tools", "agent")
+        graph = builder.compile()
+        return graph
+
+    def get_semantic_cache(self):
+        return semantic_cache

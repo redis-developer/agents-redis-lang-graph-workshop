@@ -1,14 +1,7 @@
-from abc import ABC, abstractmethod
-
-
-# Do not edit (or you won't pass)
-class ParticipantInterface(ABC):
-    @abstractmethod
-    def compile_graph(self):
-        pass
+from oregon_trail import GamePlayInterface
 
 
 # Go crazy with this one
-class PlayerAgent(ParticipantInterface):
+class PlayerAgent(GamePlayInterface):
     def compile_graph(self):
         pass

@@ -7,10 +7,12 @@
             "B: take the southern trail",
             "C: turn around",
             "D: go fishing"
-        ]
+        ],
+        "type": "multi-choice"
     },
     {
         "question": "There's a deer. You're hungry. You know what you have to do...",
-        "answer": "bang"
+        "answer": "bang",
+        "type": "action"
     }
 ]
