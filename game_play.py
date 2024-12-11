@@ -11,3 +11,8 @@ class GamePlayInterface(ABC):
     def get_semantic_cache(self):
         """if implementing a semantic cache, this function should return the cache object to preform checks against."""
         pass
+
+    @abstractmethod
+    def get_router(self):
+        """This function should return the router object to be used in the game."""
+        pass

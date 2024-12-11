@@ -1,5 +1,16 @@
 [
     {
+        "question": "In order to survive the trail ahead, you'll need to have a restocking strategy for when you need to get more supplies or risk starving. If it takes you an estimated 3 days to restock your food and you plan to start with 200lbs of food, budget 10lbs/day to eat, and keep a safety stock of at least 50lbs of back up... at what point should you restock?",
+        "answer": "D",
+        "options": [
+            "A: 100lbs",
+            "B: 20lbs",
+            "C: 5lbs",
+            "D: 80lbs"
+        ],
+        "type": "multi-choice"
+    },
+    {
         "question": "You’ve encountered a dense forest near the Blue Mountains, and your party is unsure how to proceed. There is a fork in the road, and you must choose a path. Which way will you go?",
         "answer": "B",
         "options": [
@@ -13,6 +24,11 @@
     {
         "question": "There's a deer. You're hungry. You know what you have to do...",
         "answer": "bang",
+        "type": "action"
+    },
+    {
+        "question": "Tell me about the S&P 500?",
+        "answer": "you shall not pass",
         "type": "action"
     }
 ]

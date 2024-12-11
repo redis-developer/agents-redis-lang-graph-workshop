@@ -1,9 +1,12 @@
 import json
 import time
 
+from dotenv import load_dotenv
 from final_example import ExampleAgent
 from game_play import GamePlayInterface
 from langchain_core.messages import HumanMessage
+
+load_dotenv()
 
 
 def format_question(q):
@@ -20,6 +23,9 @@ def run_game(player_agent: GamePlayInterface):
     with open("questions.json") as f:
         questions = json.load(f)
 
+    router = player_agent.get_router()
+    cache = player_agent.get_semantic_cache()
+
     for q in questions:
         start = time.time()
 
@@ -28,15 +34,19 @@ def run_game(player_agent: GamePlayInterface):
         if options := q.get("options"):
             print(f"Options: {options}")
 
-        cache_hit = player_agent.get_semantic_cache().check(
-            prompt=q["question"], return_fields=["response"]
-        )
+        cache_hit = cache.check(prompt=q["question"], return_fields=["response"])
 
         if cache_hit:
             end = time.time() - start
             print(f"Cache hit! {q['answer']}")
             assert cache_hit[-1]["response"] == q["answer"]
             assert end < 1
+            continue
+
+        blocked_topic_match = router(q["question"], distance_threshold=0.2)
+
+        if blocked_topic_match.name == "block_list":
+            print(f"Get behind me Satan! Blocked topic: {q['question']}")
             continue
 
         res = player_agent.get_graph().invoke({"messages": format_question(q)})

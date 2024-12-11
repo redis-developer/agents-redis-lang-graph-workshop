@@ -1,7 +1,10 @@
+import os
+
 from game_play import GamePlayInterface
 from langchain.tools.retriever import create_retriever_tool
 from langchain_core.documents import Document
 from langchain_core.messages import SystemMessage
+from langchain_core.tools import tool
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_redis import RedisVectorStore
 from langgraph.graph import START, MessagesState, StateGraph
@@ -9,14 +12,37 @@ from langgraph.prebuilt import (
     tools_condition,  # this is the checker for the if you got a tool back
 )
 from langgraph.prebuilt import ToolNode
+from pydantic import BaseModel, Field
 from redisvl.extensions.llmcache import SemanticCache
+from redisvl.extensions.router import Route, SemanticRouter
+from redisvl.utils.vectorize import HFTextVectorizer
+
+REDIS_URL = os.environ.get("REDIS_URL", "redis://localhost:6379/0")
+
+# Semantic router
+blocked_references = [
+    "thinks about aliens",
+    "corporate questions about agile",
+    "anything about the S&P 500",
+]
+
+block_route = Route(name="block_list", references=blocked_references)
+
+router = SemanticRouter(
+    name="bouncer",
+    vectorizer=HFTextVectorizer(),
+    routes=[block_route],
+    redis_url=REDIS_URL,
+    overwrite=True,
+)
+
 
 # Semantic cache
 hunting_example = "There's a deer. You're hungry. You know what you have to do..."
 
 semantic_cache = SemanticCache(
     name="oregon_trail_cache",
-    redis_url="redis://localhost:6379/0",
+    redis_url=REDIS_URL,
     distance_threshold=0.1,
 )
 
@@ -25,11 +51,37 @@ semantic_cache.store(prompt=hunting_example, response="bang")
 
 # System message
 SYS_MSG = SystemMessage(
-    content="You are an oregon trail playing AI agent. Use the tools available to answer the questions provided. Important: if options are provided in the question replay only with the single character A, B, C, or D and no additional text."
+    content="""
+        You are an oregon trail playing tool calling AI agent. Use the tools available to you to answer the question you are presented. When in doubt use the tools to help you find the answer.
+
+        Important: if options are provided in the question replay only with the single character A, B, C, or D and no additional text.
+    """
 )
 
 
 ## define tools
+
+## custom tool
+
+
+class RestockInput(BaseModel):
+    daily_usage: int = Field(
+        description="Pounds (lbs) of food expected to be consumed daily"
+    )
+    lead_time: int = Field(description="Lead time to replace food in days")
+    safety_stock: int = Field(
+        description="Number of pounds (lbs) of safety stock to keep on hand"
+    )
+
+
+@tool("restock-tool", args_schema=RestockInput)
+def restock_tool(daily_usage: int, lead_time: int, safety_stock: int) -> int:
+    """restock formula tool used specifically for calculating the amount of food at which you should start restocking."""
+    print(f"Using restock tool!: {daily_usage=}, {lead_time=}, {safety_stock=}")
+    return (daily_usage * lead_time) + safety_stock
+
+
+## retriever tool
 doc = Document(
     page_content="the northern trail, of the blue mountains, was destroyed by a flood and is no longer safe to traverse. It is recommended to take the southern trail although it is longer."
 )
@@ -44,11 +96,11 @@ vectorstore = RedisVectorStore.from_documents(
 
 retriever_tool = create_retriever_tool(
     vectorstore.as_retriever(),
-    "retrieve_trail_tips",
-    "Search and return information that is helpful for answering questions about what to do next on the Oregon Trail",
+    "get_directions",
+    "Search and return information related to which routes/paths/trails to take along your journey.",
 )
 
-tools = [retriever_tool]
+tools = [retriever_tool, restock_tool]
 
 ## define llm and bind with tools
 
@@ -99,3 +151,6 @@ class ExampleAgent(GamePlayInterface):
 
     def get_semantic_cache(self):
         return semantic_cache
+
+    def get_router(self):
+        return router
