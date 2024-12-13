@@ -1,5 +1,10 @@
 [
     {
+        "question": "What is the first name of the wagon leader?",
+        "answer": "Artificial",
+        "type": "free-form"
+    },
+    {
         "question": "In order to survive the trail ahead, you'll need to have a restocking strategy for when you need to get more supplies or risk starving. If it takes you an estimated 3 days to restock your food and you plan to start with 200lbs of food, budget 10lbs/day to eat, and keep a safety stock of at least 50lbs of back up... at what point should you restock?",
         "answer": "D",
         "options": [

@@ -2,9 +2,11 @@ import json
 import time
 
 from dotenv import load_dotenv
-from final_example import ExampleAgent
+
+# from final_example import ExampleAgent
 from game_play import GamePlayInterface
 from langchain_core.messages import HumanMessage
+from participant import PlayerAgent
 
 load_dotenv()
 
@@ -25,6 +27,7 @@ def run_game(player_agent: GamePlayInterface):
 
     router = player_agent.get_router()
     cache = player_agent.get_semantic_cache()
+    graph = player_agent.get_graph()
 
     for q in questions:
         start = time.time()
@@ -34,22 +37,24 @@ def run_game(player_agent: GamePlayInterface):
         if options := q.get("options"):
             print(f"Options: {options}")
 
-        cache_hit = cache.check(prompt=q["question"], return_fields=["response"])
+        if cache:
+            cache_hit = cache.check(prompt=q["question"], return_fields=["response"])
 
-        if cache_hit:
-            end = time.time() - start
-            print(f"Cache hit! {q['answer']}")
-            assert cache_hit[-1]["response"] == q["answer"]
-            assert end < 1
-            continue
+            if cache_hit:
+                end = time.time() - start
+                print(f"Cache hit! {q['answer']}")
+                assert cache_hit[-1]["response"] == q["answer"]
+                assert end < 1
+                continue
 
-        blocked_topic_match = router(q["question"], distance_threshold=0.2)
+        if router:
+            blocked_topic_match = router(q["question"], distance_threshold=0.2)
 
-        if blocked_topic_match.name == "block_list":
-            print(f"Get behind me Satan! Blocked topic: {q['question']}")
-            continue
+            if blocked_topic_match.name == "block_list":
+                print(f"Get behind me Satan! Blocked topic: {q['question']}")
+                continue
 
-        res = player_agent.get_graph().invoke({"messages": format_question(q)})
+        res = graph.invoke({"messages": format_question(q)})
 
         if q["type"] == "action":
             end = time.time() - start
@@ -66,4 +71,4 @@ def run_game(player_agent: GamePlayInterface):
 
 
 if __name__ == "__main__":
-    run_game(ExampleAgent())
+    run_game(PlayerAgent())

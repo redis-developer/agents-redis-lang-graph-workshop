@@ -2,6 +2,12 @@
 
 In this workshop we are going to create an AI agent that can help us solve the challenges necessary to survive the journey.
 
+The oregon trail is cute and all but why are we doing this??
+
+When building production chatbot systems there are many sorts of edge cases and types of ways that a user might interact with a system in an analgous fashion the Oregon Trail game presents us with different situations and edge cases to work though.
+
+This workshop will get us on our way creating an graph based agentic workflow that can process these different scenarios and implement the necessary tools and react appropriately.
+
 # Pre-requisites
 
 - python >= 3.11
@@ -17,6 +23,20 @@ Update the contents of that file with the relevant values:
 ```bash
 REDIS_URL="redis://localhost:6379/0"
 OPENAI_API_KEY=your_openai_secret_keys
+```
+
+## (Optional) Using LangSmith to make debugging easier
+
+You can make a free account with LangSmith to get access to an interface that looks like this:
+![alt text](image.png)
+
+When you create your account you'll get access to the following env variables and you can set them here in this project in your `.env`
+
+```bash
+LANGCHAIN_TRACING_V2=
+LANGCHAIN_ENDPOINT=
+LANGCHAIN_API_KEY=
+LANGCHAIN_PROJECT=
 ```
 
 ## Installing packages
@@ -58,5 +78,7 @@ You will be adding code to the `participant.py` file. The edits you make in this
 
 ## 2. Adding a semantic caching layer
 
-## 3
+## 3. Adding a routing layer
+
+## 4. Defining a custom tool
 

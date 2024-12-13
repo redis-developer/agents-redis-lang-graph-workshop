@@ -1,5 +1,6 @@
 import os
 
+from dotenv import load_dotenv
 from game_play import GamePlayInterface
 from langchain.tools.retriever import create_retriever_tool
 from langchain_core.documents import Document
@@ -16,6 +17,8 @@ from pydantic import BaseModel, Field
 from redisvl.extensions.llmcache import SemanticCache
 from redisvl.extensions.router import Route, SemanticRouter
 from redisvl.utils.vectorize import HFTextVectorizer
+
+load_dotenv()
 
 REDIS_URL = os.environ.get("REDIS_URL", "redis://localhost:6379/0")
 
