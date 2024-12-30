@@ -8,6 +8,8 @@ from langchain_openai import OpenAIEmbeddings
 from langchain_redis import RedisVectorStore
 from pydantic import BaseModel, Field
 
+from .vector_store import get_vector_store
+
 load_dotenv()
 
 REDIS_URL = os.environ.get("REDIS_URL", "redis://host.docker.internal:6379/0")
@@ -32,10 +34,9 @@ def restock_tool() -> int:
 
 
 # TODO: implement the retriever tool
-# 1. pull in direction_tips.json
-# 2. convert to LangChain document
-# 3. initial vector index in redis
-# 4. update tool with appropriate information so the agent knows how to invoke
+## update get_vector_store function
+# vector_store = get_vector_store()
+## update tool with appropriate information so the agent knows how to invoke
 # retriever_tool = create_retriever_tool()
 
 # TODO: pass the retriever_tool and restock tool multiply is only meant as an example

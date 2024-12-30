@@ -1,9 +1,11 @@
 {
   "dependencies": [
-    "./participant_agent"
+    "./participant_agent",
+    "./example_agent"
   ],
   "graphs": {
-    "participant_agent": "./participant_agent/graph.py:graph"
+    "participant_agent": "./participant_agent/graph.py:graph",
+    "example_agent": "./example_agent/graph.py:graph"
   },
   "env": ".env"
 }

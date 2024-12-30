@@ -5,10 +5,9 @@ import warnings
 
 from dotenv import load_dotenv
 from example_agent.app import ExampleApp
-from game_play import GamePlayInterface
+from game_play_interface import GamePlayInterface
 from langchain_core.messages import HumanMessage
-
-# from participant_agent.app import participant_app
+from participant_agent.app import ParticipantApp
 
 load_dotenv()
 warnings.filterwarnings("ignore")
@@ -84,9 +83,8 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.player == "example":
+        print("\n Running example agent \n")
         run_game(ExampleApp())
-    elif args.player == "participant":
-        pass
-        # run_game(PlayerAgent())
     else:
-        raise ValueError("Invalid player")
+        print("\n Running participant agent \n")
+        run_game(ParticipantApp())

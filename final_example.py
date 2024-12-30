@@ -1,7 +1,6 @@
 import os
 
 from dotenv import load_dotenv
-from game_play import GamePlayInterface
 from langchain.tools.retriever import create_retriever_tool
 from langchain_core.documents import Document
 from langchain_core.messages import SystemMessage
@@ -17,6 +16,8 @@ from pydantic import BaseModel, Field
 from redisvl.extensions.llmcache import SemanticCache
 from redisvl.extensions.router import Route, SemanticRouter
 from redisvl.utils.vectorize import HFTextVectorizer
+
+from workshop.game_play_interface import GamePlayInterface
 
 load_dotenv()
 
