@@ -2,17 +2,17 @@ from abc import ABC, abstractmethod
 
 
 class GamePlayInterface(ABC):
-    @abstractmethod
-    def get_graph(self):
-        """This function should return the compiled graph to be evaluated in the game."""
+    @property
+    def router(self):
+        """Return the router instance."""
         pass
 
-    @abstractmethod
-    def get_semantic_cache(self):
-        """if implementing a semantic cache, this function should return the cache object to preform checks against."""
+    @property
+    def semantic_cache(self):
+        """Return the semantic cache instance."""
         pass
 
-    @abstractmethod
-    def get_router(self):
-        """This function should return the router object to be used in the game."""
+    @property
+    def graph(self):
+        """Return the graph instance."""
         pass

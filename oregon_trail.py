@@ -1,14 +1,17 @@
+import argparse
 import json
 import time
+import warnings
 
 from dotenv import load_dotenv
-
-# from final_example import ExampleAgent
+from example_agent.app import ExampleApp
 from game_play import GamePlayInterface
 from langchain_core.messages import HumanMessage
-from participant import PlayerAgent
+
+# from participant_agent.app import participant_app
 
 load_dotenv()
+warnings.filterwarnings("ignore")
 
 
 def format_question(q):
@@ -21,28 +24,30 @@ def format_question(q):
     return [HumanMessage(content=formatted)]
 
 
-def run_game(player_agent: GamePlayInterface):
+def run_game(agent_app: GamePlayInterface):
     with open("questions.json") as f:
         questions = json.load(f)
 
-    router = player_agent.get_router()
-    cache = player_agent.get_semantic_cache()
-    graph = player_agent.get_graph()
+    semantic_cache = agent_app.semantic_cache()
+    router = agent_app.router()
+    graph = agent_app.graph()
 
     for q in questions:
         start = time.time()
 
-        print(f"Question: {q['question']}")
+        print(f"\n Question: {q['question']} \n")
 
         if options := q.get("options"):
-            print(f"Options: {options}")
+            print(f"\n Options: {options} \n")
 
-        if cache:
-            cache_hit = cache.check(prompt=q["question"], return_fields=["response"])
+        if semantic_cache:
+            cache_hit = semantic_cache.check(
+                prompt=q["question"], return_fields=["response"]
+            )
 
             if cache_hit:
                 end = time.time() - start
-                print(f"Cache hit! {q['answer']}")
+                print(f"\n Cache hit! {q['answer']} \n")
                 assert cache_hit[-1]["response"] == q["answer"]
                 assert end < 1
                 continue
@@ -51,7 +56,7 @@ def run_game(player_agent: GamePlayInterface):
             blocked_topic_match = router(q["question"], distance_threshold=0.2)
 
             if blocked_topic_match.name == "block_list":
-                print(f"Get behind me Satan! Blocked topic: {q['question']}")
+                print(f"\n Get behind me Satan! Blocked topic: {q['question']} \n")
                 continue
 
         res = graph.invoke({"messages": format_question(q)})
@@ -59,10 +64,10 @@ def run_game(player_agent: GamePlayInterface):
         if q["type"] == "action":
             end = time.time() - start
             if end > 1:
-                print(f"Too slow!! took: {end}s")
+                print(f"\n Too slow!! took: {end}s \n")
                 raise AssertionError(f"Too slow!! took: {end}s")
 
-        print(f"Agent answer: {res['messages'][-1].content}")
+        print(f"\n Agent answer: {res['messages'][-1].content} \n")
         if res["messages"][-1].content != q["answer"]:
             print(f"Expected: {q['answer']}, got: {res['messages'][-1].content}")
             raise AssertionError("\n You have failed the Oregon Trail ¯\_(ツ)_/¯ \n ")
@@ -71,4 +76,17 @@ def run_game(player_agent: GamePlayInterface):
 
 
 if __name__ == "__main__":
-    run_game(PlayerAgent())
+    parser = argparse.ArgumentParser(description="Run Oregon Trail game")
+    parser.add_argument(
+        "player", type=str, help="Who is playing the game agent to run the game"
+    )
+
+    args = parser.parse_args()
+
+    if args.player == "example":
+        run_game(ExampleApp())
+    elif args.player == "participant":
+        pass
+        # run_game(PlayerAgent())
+    else:
+        raise ValueError("Invalid player")
