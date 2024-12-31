@@ -7,12 +7,7 @@ from langchain_openai import ChatOpenAI
 from langgraph.prebuilt import ToolNode
 from pydantic import BaseModel, Field
 
-from .state import AgentState, OregonTrailResponse
-
-# class MultipleChoiceResponse(BaseModel):
-#     multiple_choice_response: Literal["A", "B", "C", "D"] = Field(
-#         description="Single character response to the question for multiple choice questions. Must be either A, B, C, or D."
-#     )
+from .state import AgentState, MultipleChoiceResponse
 
 
 @lru_cache(maxsize=4)
@@ -33,23 +28,29 @@ def _get_response_model(model_name: str):
     else:
         raise ValueError(f"Unsupported model type: {model_name}")
 
-    model = model.with_structured_output(tools)
+    model = model.with_structured_output(MultipleChoiceResponse)
     return model
 
 
 # Define the function that responds to the user
-def respond(state: AgentState, config):
+def multi_choice_structured(state: AgentState, config):
     # We call the model with structured output in order to return the same format to the user every time
     # state['messages'][-2] is the last ToolMessage in the convo, which we convert to a HumanMessage for the model to use
     # We could also pass the entire chat history, but this saves tokens since all we care to structure is the output of the tool
     model_name = config.get("configurable", {}).get("model_name", "openai")
 
-    print(state["messages"][-2].content, "\n\n")
+    print("In multi_choice structured: ", state["messages"][-2].content, "\n\n")
     response = _get_response_model(model_name).invoke(
-        [HumanMessage(content=state["messages"][-1].content)]
+        [
+            HumanMessage(content=state["messages"][0].content),
+            HumanMessage(content=f"Answer from tool: {state['messages'][-2].content}"),
+        ]
     )
     # We return the final answer
-    return {"final_response": response}
+    return {
+        "multi_choice_response": response.multiple_choice_response,
+        # "messages": [],
+    }
 
 
 # def multi_choice(state: AgentState):
@@ -81,11 +82,15 @@ def should_continue(state: AgentState):
         return "continue"
 
 
+# system_prompt = """
+#     You are an oregon trail playing tool calling AI agent. Use the tools available to you to answer the question you are presented. When in doubt use the tools to help you find the answer.
+#     If anyone asks your first name is Artificial return just that string.
+
+#     Important: if options are provided in the question replay only with the single character A, B, C, or D and no additional text.
+# """
 system_prompt = """
     You are an oregon trail playing tool calling AI agent. Use the tools available to you to answer the question you are presented. When in doubt use the tools to help you find the answer.
     If anyone asks your first name is Artificial return just that string.
-
-    Important: if options are provided in the question replay only with the single character A, B, C, or D and no additional text.
 """
 
 

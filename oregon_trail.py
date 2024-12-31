@@ -76,13 +76,11 @@ def run_game(agent_app: GamePlayInterface):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run Oregon Trail game")
-    parser.add_argument(
-        "player", type=str, help="Who is playing the game agent to run the game"
-    )
+    parser.add_argument("--example", nargs="?", type=bool, const=True, default=False)
 
     args = parser.parse_args()
 
-    if args.player == "example":
+    if args.example:
         print("\n Running example agent \n")
         run_game(ExampleApp())
     else:

@@ -99,7 +99,9 @@ You can see a visual of the graph you just created by opening [/sandbox.ipynb](s
 
 From the project root run:
 
-`python oregon_trail.py` to see if everything runs
+`python oregon_trail.py` to see if everything runs.
+
+Note: The expected behavior is you will see some logs and fail on the first question.
 
 ## Scenario 1: Name of the Wagon Leader.
 
@@ -117,6 +119,8 @@ If anyone asks your first name is Artificial return just that string.
 
 Run `python oregon_trail.py` to see if you pass
 
+Now you should get past the first question but fail on the second about restocking.
+
 ## Scenario 2: Planning restock
 
 On the trail, you may have to do some planning in regards to how much food you want to utilize and when you will need to restock.
@@ -130,7 +134,11 @@ steps:
 - implement the restock formula: `(daily_usage * lead_time) + safety_stock`
 - update the `RestockInput` class such that it receives the correct variables
 - pass the restock_tool to the exported `tools` list
-- update the system prompt such that the agent knows how to respond to multiple choice questions.
+- update the **system prompt** such that the agent knows how to respond to multiple choice questions.
+
+Run `python oregon_trail.py` to see if you pass
+
+Note: sometimes the LLM might be good enough to arrive at this answer itself but in this case we want to make sure we use the tool and output in a format our "system" can understand.
 
 ## Scenario 3: Retrieval information
 

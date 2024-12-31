@@ -17,25 +17,26 @@ class GraphConfig(TypedDict):
 
 
 # TODO: define the graph to be used in testing
-workflow = StateGraph(AgentState, config_schema=GraphConfig)
+# workflow = StateGraph(AgentState, config_schema=GraphConfig)
 
-# Update otherwise it won't work dawg
+# # Update otherwise it won't work dawg
 
-# node 1
-workflow.add_node()
-# node 2
-workflow.add_node()
+# # node 1
+# workflow.add_node()
+# # node 2
+# workflow.add_node()
 
-# entry
-workflow.set_entry_point()
+# # entry
+# workflow.set_entry_point()
 
-# Conditional edge
-workflow.add_conditional_edges()
+# # Conditional edge
+# workflow.add_conditional_edges()
 
-# We now add a normal edge.
-workflow.add_edge()
+# # We now add a normal edge.
+# workflow.add_edge()
 
-# **graph defined here**
+# # **graph defined here**
 
-# Compiled graph will be picked up by workflow
-graph = workflow.compile()
+# # Compiled graph will be picked up by workflow
+# graph = workflow.compile()
+graph = None
