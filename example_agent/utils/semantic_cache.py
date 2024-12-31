@@ -8,7 +8,7 @@ load_dotenv()
 REDIS_URL = os.environ.get("REDIS_URL", "redis://host.docker.internal:6379/0")
 
 # Semantic cache
-hunting_example = "There's a deer. You're hungry. You know what you have to do..."
+hunting_example = "There's a deer. You're starving. You know what you have to do..."
 
 semantic_cache = SemanticCache(
     name="oregon_trail_cache",

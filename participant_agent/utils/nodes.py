@@ -24,7 +24,7 @@ def _get_tool_model(model_name: str):
 
 
 # TODO: define meaningful system prompt for Agent
-system_prompt = """You are an Agent that plays the Oregon Trail"""
+system_prompt = """"""
 
 
 # TODO: define the interaction between agent, tools, and messages
