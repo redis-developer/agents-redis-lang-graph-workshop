@@ -13,6 +13,14 @@ load_dotenv()
 warnings.filterwarnings("ignore")
 
 
+def check_answer(observed, answer):
+    print(f"Expected: {answer}, got: {observed}")
+    if observed != answer:
+        raise AssertionError(
+            "\n You died of dysentery on the Oregon Trail ¯\_(ツ)_/¯ \n "
+        )
+
+
 def format_question(q):
     question = q["question"]
     options = q.get("options", "")
@@ -66,10 +74,12 @@ def run_game(agent_app: GamePlayInterface):
                 print(f"\n Too slow!! took: {end}s \n")
                 raise AssertionError(f"Too slow!! took: {end}s")
 
-        print(f"\n Agent answer: {res['messages'][-1].content} \n")
-        if res["messages"][-1].content != q["answer"]:
-            print(f"Expected: {q['answer']}, got: {res['messages'][-1].content}")
-            raise AssertionError("\n You have failed the Oregon Trail ¯\_(ツ)_/¯ \n ")
+        if q["type"] == "multi-choice":
+            print("\n Checking multiple choice \n")
+            check_answer(res["multi_choice_response"], q["answer"])
+        else:
+            print("\n Checking free form \n")
+            check_answer(res["messages"][-1].content, q["answer"])
 
     print("You made it to Oregon! 🎉")
 
