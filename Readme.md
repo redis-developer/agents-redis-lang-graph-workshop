@@ -165,7 +165,7 @@ workflow.add_conditional_edges(
 ```
 
 Final graph should look like this:
-![alt text](image-1.png)
+![multi_choice](images/multi_choice_graph.png)
 
 Run `python oregon_trail.py` to see if you pass
 
@@ -193,6 +193,8 @@ Run `python oregon_trail.py` to see if you pass
 
 If this passes open `localhost:8001` and see your vector record stored within the database.
 
+![retrieval](images/retrieval_db.png)
+
 ## Scenario 4: Speed example
 
 On the trail, sometimes speed is more important than holistic logic. For these type of question you might want to bypass the agent layer all together if you have already cached what a system should respond with given a certain situation.
@@ -209,6 +211,8 @@ Run `python oregon_trail.py` to see if you pass
 
 If this passes open `localhost:8001` and see the cached record stored within the database.
 
+![cache](images/cache_db.png)
+
 ## Scenario 5: Allow/block list with Router
 
 On the trail, you may run into situations where your agent is simply being asked the wrong questions and you don't want to waste expensive resources dealing with unnecessary topics. In this case we will add a routing layer in front of our agent to prevent our Oregon Trail bot from answering unrelated questions.
@@ -224,6 +228,8 @@ steps:
 Run `python oregon_trail.py` to see if you pass
 
 If this passes open `localhost:8001` and see the route records stored within the database.
+
+![router](images/router_db.png)
 
 # You survived the Oregon Trail!!
 
