@@ -3,6 +3,7 @@ from typing import Literal, TypedDict
 from dotenv import load_dotenv
 from example_agent.utils.nodes import (
     call_tool_model,
+    is_multi_choice,
     multi_choice_structured,
     tool_node,
 )
@@ -18,13 +19,6 @@ load_dotenv()
 # Define the config
 class GraphConfig(TypedDict):
     model_name: Literal["anthropic", "openai"]
-
-
-def is_multi_choice(state: AgentState):
-    if "options:" in state["messages"][0].content.lower():
-        return "multi-choice"
-    else:
-        return "not-multi-choice"
 
 
 # Define a new graph

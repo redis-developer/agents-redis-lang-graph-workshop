@@ -5,7 +5,7 @@ from langchain_openai import ChatOpenAI
 from langgraph.prebuilt import ToolNode
 from participant_agent.utils.tools import tools
 
-from .state import AgentState
+from .state import AgentState, MultipleChoiceResponse
 
 
 # need to use this in call_tool_model function
@@ -21,6 +21,54 @@ def _get_tool_model(model_name: str):
 
     model = model.bind_tools(tools)
     return model
+
+
+#### For structured output
+
+
+# TODO: this function will be used when using structured output
+@lru_cache(maxsize=4)
+def _get_response_model(model_name: str):
+    if model_name == "openai":
+        model = ChatOpenAI(temperature=0, model_name="gpt-4o")
+    else:
+        raise ValueError(f"Unsupported model type: {model_name}")
+
+    # TODO: pass model for structured output
+    model = model.with_structured_output()
+    return model
+
+
+# Define the function that responds to the user
+def multi_choice_structured(state: AgentState, config):
+    # We call the model with structured output in order to return the same format to the user every time
+    # state['messages'][-2] is the last ToolMessage in the convo, which we convert to a HumanMessage for the model to use
+    # We could also pass the entire chat history, but this saves tokens since all we care to structure is the output of the tool
+    model_name = config.get("configurable", {}).get("model_name", "openai")
+
+    print("In multi_choice structured: ", state["messages"][-2].content, "\n\n")
+
+    response = _get_response_model(model_name).invoke(
+        [
+            HumanMessage(content=state["messages"][0].content),
+            HumanMessage(content=f"Answer from tool: {state['messages'][-2].content}"),
+        ]
+    )
+
+    # TODO: return appropriate response
+    return {}
+
+
+# Logical function for next step in graph execution
+def is_multi_choice(state: AgentState):
+    # TODO: return the appropriate strings for next step in graph
+    if "options:" in state["messages"][0].content.lower():
+        return ""
+    else:
+        return ""
+
+
+###
 
 
 # TODO: define meaningful system prompt for Agent

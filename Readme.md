@@ -134,11 +134,45 @@ steps:
 - implement the restock formula: `(daily_usage * lead_time) + safety_stock`
 - update the `RestockInput` class such that it receives the correct variables
 - pass the restock_tool to the exported `tools` list
-- update the **system prompt** such that the agent knows how to respond to multiple choice questions.
 
 Run `python oregon_trail.py` to see if you pass
 
-Note: sometimes the LLM might be good enough to arrive at this answer itself but in this case we want to make sure we use the tool and output in a format our "system" can understand.
+### Scenario 2 sub-problem: structured output
+
+At this stage, you may notice that your agent is returning a "correct" answer to the question but not in the format the test script expects. Specifically the testing script expects answers to multiple choice questions to be the single character "A", "B", "C", or "D". This may seem contrived, but often in production scenarios agents will be expected to work with existing deterministic systems that will require specific schemas. For this reason, LangChain supports an LLM call `with_structured_output` so that response can come from a predictable structure.
+
+steps:
+- open [participant_agent/utils/state.py](participant_agent/utils/state.py) and uncomment the multi_choice_response attribute on the state parameter. To this point our state has only had one attribute called `messages` but we are adding a specific field that we will add structured outputs to.
+    - also observe the defined pydantic model in this file for our output
+- next open [participant_agent/utils/nodes.py](participant_agent/utils/nodes.py) and complete the TODOs
+    - pass the pydantic class to the `with_structured_output` function
+    - return the response from the multi_choice_structured `{"multi_choice_response": response.multiple_choice_response}`
+    - we will come back and update the `is_multi_choice` function in a second
+- update our graph to support a more advanced flow (see image below)
+    - add a node for our `multi_choice_structured` this takes the messages after our tool calls and uses an LLM to format as we expect.
+    - add a conditional edge after the agent that determines if a multi-choice formatting is appropriate (see example)
+    - update the `is_multi_choice` function in the nodes file to return the appropriate strings
+    - add an edge that goes from `multi_choice_structured` to `END`
+
+Conditional edge example:
+
+```python
+workflow.add_conditional_edges(
+    "agent",
+    is_multi_choice, # function in nodes that returns a string ["multi-choice", "not-multi-choice"]
+    {"multi-choice": "multi_choice_structured", "not-multi-choice": END}, # based on the string returned from the function instructs graph to route to a given node
+)
+```
+
+Final graph should look like this:
+![alt text](image-1.png)
+
+Run `python oregon_trail.py` to see if you pass
+
+### Comments
+
+After these changes our graph is more predictable with structure output however it's important to note that a tradeoff has been incurred. Our results will be more deterministic but we had to add an additional LLM call and additional complexity to our graph in order to accomplish this feat. It's not necessarily a bad thing but it's important to keep in mind as LLM bills and latency can scale quickly.
+
 
 ## Scenario 3: Retrieval information
 
@@ -197,6 +231,7 @@ If this passes open `localhost:8001` and see the route records stored within the
 
 - You created a tool calling AI Agent
 - You defined a custom tool for mathematical operations (restocking)
+- You added structured output for when a system requires answers within a certain form.
 - You defined a tool that implements Retrieval Augmented Generation aka RAG (retrieval tool)
 - You created a semantic cache that can increase the speed and cost effectiveness of your agent workflow by short circuiting for known inputs/outputs.
 - You implemented a router to protect your system from wasting time/resources on unrelated topics.
