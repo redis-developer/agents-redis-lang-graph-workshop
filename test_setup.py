@@ -14,7 +14,7 @@ def test_setup():
     assert llm.invoke(["Hello, how are you?"])
     assert client.ping()
 
-    print("You're ready to go!")
+    print("Setup worked")
 
 
 if __name__ == "__main__":

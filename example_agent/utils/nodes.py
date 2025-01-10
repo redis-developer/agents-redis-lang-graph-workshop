@@ -1,9 +1,10 @@
 from functools import lru_cache
 
-from example_agent.utils.tools import tools
 from langchain_core.messages import HumanMessage
 from langchain_openai import ChatOpenAI
 from langgraph.prebuilt import ToolNode
+
+from example_agent.utils.tools import tools
 
 from .state import AgentState, MultipleChoiceResponse
 
@@ -37,7 +38,6 @@ def multi_choice_structured(state: AgentState, config):
     # We could also pass the entire chat history, but this saves tokens since all we care to structure is the output of the tool
     model_name = config.get("configurable", {}).get("model_name", "openai")
 
-    print("In multi_choice structured: ", state["messages"], "\n\n")
     response = _get_response_model(model_name).invoke(
         [
             HumanMessage(content=state["messages"][0].content),

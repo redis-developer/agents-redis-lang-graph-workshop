@@ -2,7 +2,7 @@
 
 In this workshop we are going to use [LangGraph](https://langchain-ai.github.io/langgraph/) to create a tool calling LLM agent that can survive a set of Oregon Trail themed scenarios. Additionally, we will setup and configure a semantic cache, allow/block list router, and a vector retrieval tool. The final architecture will look like this:
 
-# Diagram in Excalidraw but currently can't access
+![arch](images/architecture.png)
 
 # Pre-requisites
 
@@ -125,9 +125,9 @@ Now you should get past the first question but fail on the second about restocki
 
 On the trail, you may have to do some planning in regards to how much food you want to utilize and when you will need to restock.
 
-**question**: In order to survive the trail ahead, you'll need to have a restocking strategy for when you need to get more supplies or risk starving. If it takes you an estimated 3 days to restock your food and you plan to start with 200lbs of food, budget 10lbs/day to eat, and keep a safety stock of at least 50lbs of back up... at what point should you restock?
-**answer**: D
-**options**: [A: 100lbs, B: 20lbs, C: 5lbs, D: 80lbs]
+**question**: In order to survive the trail ahead, you'll need to have a restocking strategy for when you need to get more supplies or risk starving. If it takes you an estimated 3 days to restock your food and you plan to start with 200lbs of food, budget 10lbs/day to eat, and keep a safety stock of at least 50lbs of back up... at what point should you restock? <br>
+**answer**: D <br>
+**options**: [A: 100lbs, B: 20lbs, C: 5lbs, D: 80lbs] <br>
 
 steps:
 - update the restock-tool description with a meaningful doc_string that provides context for the LLM
@@ -164,8 +164,8 @@ workflow.add_conditional_edges(
 )
 ```
 
-Final graph should look like this:
-![multi_choice](images/multi_choice_graph.png)
+Final graph should look like this: <br>
+![multi_choice](images/multi_choice_graph.png)<br>
 
 Run `python oregon_trail.py` to see if you pass
 
@@ -178,8 +178,8 @@ After these changes our graph is more predictable with structure output however 
 
 On the trail, you might need to ask for help to get specific contextual information necessary to answer certain types of questions.
 
-**question**: You’ve encountered a dense forest near the Blue Mountains, and your party is unsure how to proceed. There is a fork in the road, and you must choose a path. Which way will you go?
-**answer**: B
+**question**: You’ve encountered a dense forest near the Blue Mountains, and your party is unsure how to proceed. There is a fork in the road, and you must choose a path. Which way will you go? <br>
+**answer**: B <br>
 **options**: [A: take the northern trail, B: take the southern trail, C: turn around, D: go fishing]
 
 steps:
@@ -196,6 +196,8 @@ If this passes open `localhost:8001` and see your vector record stored within th
 ![retrieval](images/retrieval_db.png)
 
 ## Scenario 4: Speed example
+
+![cache diagram](images/cache_diagram.png)
 
 On the trail, sometimes speed is more important than holistic logic. For these type of question you might want to bypass the agent layer all together if you have already cached what a system should respond with given a certain situation.
 
@@ -214,6 +216,8 @@ If this passes open `localhost:8001` and see the cached record stored within the
 ![cache](images/cache_db.png)
 
 ## Scenario 5: Allow/block list with Router
+
+![router diagram](images/router_diagram.png)
 
 On the trail, you may run into situations where your agent is simply being asked the wrong questions and you don't want to waste expensive resources dealing with unnecessary topics. In this case we will add a routing layer in front of our agent to prevent our Oregon Trail bot from answering unrelated questions.
 

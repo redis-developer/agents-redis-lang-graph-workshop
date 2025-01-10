@@ -26,7 +26,7 @@ class RestockInput(BaseModel):
 @tool("restock-tool", args_schema=RestockInput)
 def restock_tool(daily_usage: int, lead_time: int, safety_stock: int) -> int:
     """restock formula tool used specifically for calculating the amount of food at which you should start restocking."""
-    print(f"Using restock tool!: {daily_usage=}, {lead_time=}, {safety_stock=}")
+    print(f"\n Using restock tool!: {daily_usage=}, {lead_time=}, {safety_stock=} \n")
     return (daily_usage * lead_time) + safety_stock
 
 
