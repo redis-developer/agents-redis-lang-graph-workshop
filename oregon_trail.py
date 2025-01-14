@@ -4,9 +4,10 @@ import time
 import warnings
 
 from dotenv import load_dotenv
-from example_agent.app import ExampleApp
-from game_play_interface import GamePlayInterface
 from langchain_core.messages import HumanMessage
+
+from example_agent.ex_app import ExampleApp
+from game_play_interface import GamePlayInterface
 from participant_agent.app import ParticipantApp
 
 load_dotenv()

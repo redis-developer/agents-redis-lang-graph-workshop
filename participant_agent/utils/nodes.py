@@ -3,6 +3,7 @@ from functools import lru_cache
 from langchain_core.messages import HumanMessage
 from langchain_openai import ChatOpenAI
 from langgraph.prebuilt import ToolNode
+
 from participant_agent.utils.tools import tools
 
 from .state import AgentState, MultipleChoiceResponse
@@ -46,8 +47,6 @@ def multi_choice_structured(state: AgentState, config):
     # We could also pass the entire chat history, but this saves tokens since all we care to structure is the output of the tool
     model_name = config.get("configurable", {}).get("model_name", "openai")
 
-    print("In multi_choice structured: ", state["messages"][-2].content, "\n\n")
-
     response = _get_response_model(model_name).invoke(
         [
             HumanMessage(content=state["messages"][0].content),
@@ -55,40 +54,38 @@ def multi_choice_structured(state: AgentState, config):
         ]
     )
 
-    # TODO: return appropriate response
-    return {}
+    return {
+        "multi_choice_response": response.multiple_choice_response,
+    }
 
 
 # Logical function for next step in graph execution
 def is_multi_choice(state: AgentState):
-    # TODO: return the appropriate strings for next step in graph
     if "options:" in state["messages"][0].content.lower():
-        return ""
+        return "multi-choice"
     else:
-        return ""
+        return "not-multi-choice"
 
 
 ###
 
 
 # TODO: define meaningful system prompt for Agent
-system_prompt = """"""
+system_prompt = ""
 
 
-# TODO: define the interaction between agent, tools, and messages
-# This is a critical part of creating agents and understanding the flow of messages
 def call_tool_model(state: AgentState, config):
     # Combine system prompt with incoming messages
-    messages = [{"role": "system", "content": _}] + state["messages"]
+    messages = [{"role": "system", "content": system_prompt}] + state["messages"]
 
     # Get from LangGraph config
     model_name = config.get("configurable", {}).get("model_name", "openai")
 
     # Get our model that binds our tools
-    model = _get_tool_model(_)
+    model = _get_tool_model(model_name)
 
     # invoke the central agent/reasoner with the context of the graph
-    response = model.invoke(_)
+    response = model.invoke(messages)
 
     # We return a list, because this will get added to the existing list
     return {"messages": [response]}

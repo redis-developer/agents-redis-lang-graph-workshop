@@ -4,7 +4,7 @@ import pytest
 from langchain_core.messages import HumanMessage
 
 # from participant_agent.app import ParticipantApp
-from example_agent.app import ExampleApp
+from example_agent.ex_app import ExampleApp
 
 print("\n\n\n Welcome to the Oregon Trail! \n\n\n")
 
@@ -25,7 +25,7 @@ def format_multi_choice_question(q):
 def test_1_wagon_leader(app):
     scenario = {
         "question": "What is the first name of the wagon leader?",
-        "answer": "Artificial",
+        "answer": "Art",
         "type": "free-form",
     }
 

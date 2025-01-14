@@ -23,7 +23,7 @@ def format_multi_choice_question(q):
 def test_1_wagon_leader(app):
     scenario = {
         "question": "What is the first name of the wagon leader?",
-        "answer": "Artificial",
+        "answer": "Art",
         "type": "free-form",
     }
 

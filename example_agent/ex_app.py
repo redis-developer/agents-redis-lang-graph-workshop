@@ -1,8 +1,8 @@
-from example_agent.utils.router import router
-from example_agent.utils.semantic_cache import semantic_cache
+from example_agent.utils.ex_router import router
+from example_agent.utils.ex_semantic_cache import semantic_cache
 from game_play_interface import GamePlayInterface
 
-from .graph import graph
+from .ex_graph import graph
 
 
 class ExampleApp(GamePlayInterface):

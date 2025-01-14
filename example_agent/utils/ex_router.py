@@ -22,5 +22,5 @@ router = SemanticRouter(
     vectorizer=HFTextVectorizer(),
     routes=[blocked_route],
     redis_url=REDIS_URL,
-    overwrite=True,
+    overwrite=False,
 )

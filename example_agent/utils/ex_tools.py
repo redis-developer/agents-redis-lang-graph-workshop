@@ -2,11 +2,10 @@ import os
 
 from dotenv import load_dotenv
 from langchain.tools.retriever import create_retriever_tool
-from langchain_core.documents import Document
 from langchain_core.tools import tool
 from pydantic import BaseModel, Field
 
-from .vector_store import get_vector_store
+from .ex_vector_store import get_vector_store
 
 load_dotenv()
 

@@ -1,4 +1,9 @@
-# Welcome to the Oregon Trail
+<div>
+<div><img src="images/redis-logo.svg" style="width: 130px"> </div>
+</div>
+<br>
+
+# Oregon Trail Agent Workshop
 
 In this workshop we are going to use [LangGraph](https://langchain-ai.github.io/langgraph/) to create a tool calling LLM agent that can survive a set of Oregon Trail themed scenarios. Additionally, we will setup and configure a semantic cache, allow/block list router, and a vector retrieval tool. The final architecture will look like this:
 
@@ -6,7 +11,9 @@ In this workshop we are going to use [LangGraph](https://langchain-ai.github.io/
 
 # Pre-requisites
 
-- [python >= 3.11](https://www.python.org/downloads/)
+- [python == 3.12.8](https://www.python.org/downloads/release/python-3128/)
+    - **Note:** this workshop was tested with version 3.12.8.
+    - You may experience issues if using another version!
 - [docker](https://docs.docker.com/get-started/get-docker/)
 - [openai api key](https://platform.openai.com/docs/quickstart)
 
@@ -18,7 +25,7 @@ In this workshop we are going to use [LangGraph](https://langchain-ai.github.io/
 
 # Environment setup
 
-### 1. copy and update env file
+## Copy and update env file
 
 Run the following to create a .env file
 `cp dot.env .env`
@@ -35,17 +42,20 @@ LANGCHAIN_API_KEY=
 LANGCHAIN_PROJECT=
 ```
 
-### 2. setup python environment
+## Setup python environment
 
 Assuming you have a stable install of python going let's setup a virtual env and install the project requirements.
 
-Make sure you're in your project fork:
+#### Make sure you're in your project fork:
 `cd <your-project-fork>`
 
-Create a virtual environment:
+#### Check python version:
+`python --version`
+
+#### Create a virtual environment:
 `python -m venv venv`
 
-Activate the environment:
+#### Activate the environment:
 
 Mac/linux:
 `source venv/bin/activate`
@@ -53,75 +63,100 @@ Mac/linux:
 Windows:
 `venv\Scripts\activate`
 
-Install the requirements:
+#### Install the requirements:
 `pip install -r requirements.txt`
 
-### 3. Running a local Redis instance
+## Run Redis instance
 
-With docker (recommended):
+### With docker (recommended):
 `docker run -d --name redis -p 6379:6379 -p 8001:8001 redis/redis-stack:latest`
 
 Navigate to `http://localhost:8001/` on your machine and inspect the database with the redis insight GUI.
 
-### 4. Test setup
+## Test setup
 
 To make sure redis is connecting properly and your LLM is authenticated run the following script:
 
 `python test_setup.py`
 
-If you get a message that states `You're ready to go!` you are, in fact, ready.
+If you don't get any errors you are ready to go. If you do **ask for help!** The rest of the workshop will not work if this doesn't.
 
-# The hardest part is over - let's code!
+# The hardest part is over - let's the fun begin!
 
-## Review project structure
+The objective of this workshop is to build an agentic app that can handle 5 different scenarios essential to making it to Oregon.
 
-- The questions your agent will be tested on are all within the `question.json` file.
-- You will perform all your work in the `/participant_agent` folder.
-- Within this folder there are various **TODO** tasks for you to complete in the corresponding files.
+1. Knowing the name of the wagon leader (basic prompting).
+2. Knowing when to restock food (implementing a custom tool).
+3. Knowing how to ask for directions (retrieval augmented generation).
+4. Knowing how to hunt (semantic caching).
+5. Knowing what to ignore (allow/block list router).
 
-## Complete required boilerplate
+You can see the details of each scenario in [questions.json](questions.json)
 
-- open [participant_agent/utils/nodes.py](participant_agent/utils/nodes.py)
-    - define a system prompt
-    - pass that variable as the content within that message dict
-    - pass the model name to the _get_tool_model function this function binds tools to a specified model
-    - pass the messages to be invoked by the model
-- open [participant_agent/graph.py](participant_agent/graph.py)
-    - node 1 should have label `agent` and invoke the `call_tool_model` we just defined
-    - node 2 should have label `tools` and invoke the `tool_node`. The tool node utilizes a built in wrapper from LangChain and makes all tools defined in the tools file available to the LLM agent.
-    - `add_conditional_edge` takes the starting point, `“agent”`, and a function for determining the next tool to call. For simplicity we will use the built in `tools_condition` imported for you.
-    - Define an edge such that flow can go from “tools” back to the “agent” aka the normal edge.
-- open [participant_agent/utils/tools.py](participant_agent/utils/tools.py)
-    - there is nothing you need to modify in this folder but you will see shell implementations for the tools we will be defining in this workshop.
-    - notice the multiply example this shows how tools can take input and **require a meaningful doc_string** so the LLM "knows" when to use that particular tool.
+## Testing progress
+You can find these scenarios defined in `test_participant_oregon_trail.py`
 
-You can see a visual of the graph you just created by opening [/sandbox.ipynb](sandbox.ipynb) notebook or by opening your project folder with LangGraph studio.
-
-From the project root run:
-
-`python oregon_trail.py` to see if everything runs.
-
-Note: The expected behavior is you will see some logs and fail on the first question.
-
-## Scenario 1: Name of the Wagon Leader.
-
-**question**: What is the first name of the wagon leader?
-**answer**: Artificial
-
-When working with LLM we need to provide them context of "who" they are and what their purposes is to get the best results. Don't underestimate the value of good prompting!
-
-Update the system prompt to something like:
+To test progress along the trail save the following alias:
 
 ```bash
-You are an oregon trail playing tool calling AI agent. Use the tools available to you to answer the question you are presented. When in doubt use the tools to help you find the answer.
-If anyone asks your first name is Artificial return just that string.
+alias test_trail_agent="pytest --disable-warnings -vv -rP test_participant_oregon_trail.py"
 ```
 
-Run `python oregon_trail.py` to see if you pass
+Then run `test_trail_agent` whenever you want to check your progress.
 
-Now you should get past the first question but fail on the second about restocking.
+### Note: these test **will fail** at first - that's okay - you will be fixing them!
 
-## Scenario 2: Planning restock
+Start:
+![fail](images/fail.png)
+
+Finish:
+![success](images/success.png)
+
+# Project structure and flow
+
+- You will perform **all** your work in the [/particpant_agent](/participant_agent/) folder.
+- Within this folder there are various **TODO** tasks for you to complete in the corresponding files.
+- After making updates you will test if the next test passes by running `test_trail_agent`
+
+# Scenario 1: name of the wagon leader.
+
+**question**: What is the first name of the wagon leader?
+**answer**: Art (short for Artificial Intelligence)
+
+To complete this scenario we must:
+
+
+## update the system prompt
+
+Open [participant_agent/utils/nodes.py](./participant_agent/utils/nodes.py)
+
+Update the system_prompt to:
+
+`You are an oregon trail playing tool calling AI agent. Use the tools available to you to answer the question you are presented. When in doubt use the tools to help you find the answer. If anyone asks your first name is Art return just that string.`
+
+When working with LLMs, we need to provide a useful context to the model. In this case, we are telling the model what it's meant to do (play the Oregon Trail) and that it's name is "Art". This may seem trivial but don't underestimate the value of good prompting!
+
+## Define a graph
+
+Open [participant_agent/graph.py](./participant_agent/graph.py)
+
+### Note: instructor will be going through this in detail if you get confused.
+
+- Uncomment lines 19-41
+- Delete line 42 (graph = None) this is just a placeholder
+- Define node 1, the agent, by passing a label "agent" and the code to execute at that node `call_tool_model`
+- Define node 2, the tool node, by passing the label "tools" and the code to be executed at that node `tool_node`
+- Set the entrypoint for your graph at "agent"
+- Add a **conditional edge** with label "agent" and function `tools_condition`
+- Add a normal edge between "tools" and "agent"
+
+Run `test_trail_agent` to see if you pass the first scenario.
+
+If you didn't pass **ask for help!**.
+
+To see a visual of your graph checkout [sandbox.ipynb](./sandbox.ipynb).
+
+## Scenario 2: restocking tool
 
 On the trail, you may have to do some planning in regards to how much food you want to utilize and when you will need to restock.
 
@@ -130,25 +165,21 @@ On the trail, you may have to do some planning in regards to how much food you w
 **options**: [A: 100lbs, B: 20lbs, C: 5lbs, D: 80lbs] <br>
 
 steps:
-- update the restock-tool description with a meaningful doc_string that provides context for the LLM
+- open [participant_agent/utils/tools.py](./participant_agent/utils/tools.py) update the restock-tool description with a meaningful doc_string that provides context for the LLM.
+Ex: `restock formula tool used specifically for calculating the amount of food at which you should start restocking.`
 - implement the restock formula: `(daily_usage * lead_time) + safety_stock`
 - update the `RestockInput` class such that it receives the correct variables
 - pass the restock_tool to the exported `tools` list
 
-Run `python oregon_trail.py` to see if you pass
-
 ### Scenario 2 sub-problem: structured output
 
-At this stage, you may notice that your agent is returning a "correct" answer to the question but not in the format the test script expects. Specifically the testing script expects answers to multiple choice questions to be the single character "A", "B", "C", or "D". This may seem contrived, but often in production scenarios agents will be expected to work with existing deterministic systems that will require specific schemas. For this reason, LangChain supports an LLM call `with_structured_output` so that response can come from a predictable structure.
+At this stage, you may that your agent is returning a "correct" answer to the question but not in the **format** the test script expects. The test script expects answers to multiple choice questions to be the single character "A", "B", "C", or "D". This may seem contrived, but often in production scenarios agents will be expected to work with existing deterministic systems that will require specific schemas. For this reason, LangChain supports an LLM call `with_structured_output` so that response can come from a predictable structure.
 
 steps:
 - open [participant_agent/utils/state.py](participant_agent/utils/state.py) and uncomment the multi_choice_response attribute on the state parameter. To this point our state has only had one attribute called `messages` but we are adding a specific field that we will add structured outputs to.
     - also observe the defined pydantic model in this file for our output
-- next open [participant_agent/utils/nodes.py](participant_agent/utils/nodes.py) and complete the TODOs
-    - pass the pydantic class to the `with_structured_output` function
-    - return the response from the multi_choice_structured `{"multi_choice_response": response.multiple_choice_response}`
-    - we will come back and update the `is_multi_choice` function in a second
-- update our graph to support a more advanced flow (see image below)
+- next open [participant_agent/utils/nodes.py](participant_agent/utils/nodes.py) and pass the pydantic class defined in state to the `with_structured_output` function
+- update the graph to support a more advanced flow (see image below)
     - add a node for our `multi_choice_structured` this takes the messages after our tool calls and uses an LLM to format as we expect.
     - add a conditional edge after the agent that determines if a multi-choice formatting is appropriate (see example)
     - update the `is_multi_choice` function in the nodes file to return the appropriate strings
@@ -167,35 +198,45 @@ workflow.add_conditional_edges(
 Final graph should look like this: <br>
 ![multi_choice](images/multi_choice_graph.png)<br>
 
-Run `python oregon_trail.py` to see if you pass
+Run `test_trail_agent` to see if you pass
 
 ### Comments
 
 After these changes our graph is more predictable with structure output however it's important to note that a tradeoff has been incurred. Our results will be more deterministic but we had to add an additional LLM call and additional complexity to our graph in order to accomplish this feat. It's not necessarily a bad thing but it's important to keep in mind as LLM bills and latency can scale quickly.
 
 
-## Scenario 3: Retrieval information
-
-On the trail, you might need to ask for help to get specific contextual information necessary to answer certain types of questions.
+## Scenario 3: retrieval tool
 
 **question**: You’ve encountered a dense forest near the Blue Mountains, and your party is unsure how to proceed. There is a fork in the road, and you must choose a path. Which way will you go? <br>
 **answer**: B <br>
 **options**: [A: take the northern trail, B: take the southern trail, C: turn around, D: go fishing]
 
+This scenario requires us to implement Retrieval Augmented Generation (RAG) within our agent workflow. There are cases when an LLM can't be expected to know some piece of information based on its training data and therefore needs to be supplemented.
+
+This is often the case for **time bound** or **proprietary** data. In this case you might augment generation from an LLM by pulling helpful data from a vector database.
+
+In our scenario we want to be able to retrieve the time-bound information that the `"the northern trail, of the blue mountains, was destroyed by a flood and is no longer safe to traverse. It is recommended to take the southern trail although it is longer."`.
+
+
+![rag](images/RAG.png)
+
+
 steps:
 - open [participant_agent/utils/vector_store.py](participant_agent/utils/vector_store.py)
 - a function has been started for you that first checks if a vector index already exists and if not creates it. You will implement the part when it needs to be created.
 - to do this we will leverage the `.from_documents` function within the `langchain_redis.RedisVectorStore` class. Ex: `RedisVectorStore.from_documents(<docs>, <embedding_model>, config=<config>)` where the doc is the pre-defined info that the northern trail was flooded.
-- open the tools file and update the create_retriever_tool to take the correct params. Ex: `create_retriever_tool(vector_store.as_retriever(), "get_directions", "meaningful doc string")`
+- open [participant_agent/utils/tools.py](participant_agent/utils/tools.py)
+    - uncomment code for retrieval tool
+    - update the create_retriever_tool to take the correct params. Ex: `create_retriever_tool(vector_store.as_retriever(), "get_directions", "meaningful doc string")`
 - make sure the retriever tool is included in the list of tools
 
-Run `python oregon_trail.py` to see if you pass
+Run `test_trail_agent` to see if you pass
 
 If this passes open `localhost:8001` and see your vector record stored within the database.
 
 ![retrieval](images/retrieval_db.png)
 
-## Scenario 4: Speed example
+## Scenario 4: semantic cache
 
 ![cache diagram](images/cache_diagram.png)
 
@@ -209,13 +250,13 @@ steps:
 - set semantic_cache to be an instance of the `redisvl.extensions.llmcache.SemanticCahe` class. Ex: `SemanticCache(name=, redis_url=, distance_threshold=0.1)`
 - store a prompt similar to the question and answer pair shown above (a similar example is provided in the file). Ex: `semantic_cache.store(prompt=, response=)`
 
-Run `python oregon_trail.py` to see if you pass
+Run `test_trail_agent` to see if you pass
 
 If this passes open `localhost:8001` and see the cached record stored within the database.
 
 ![cache](images/cache_db.png)
 
-## Scenario 5: Allow/block list with Router
+## Scenario 5: allow/block list with router
 
 ![router diagram](images/router_diagram.png)
 
@@ -225,11 +266,11 @@ On the trail, you may run into situations where your agent is simply being asked
 **answer**: you shall not pass
 
 steps:
-- open [workshop/participant_agent/utils/router.py](workshop/participant_agent/utils/router.py)
+- open [participant_agent/utils/router.py](participant_agent/utils/router.py)
 - define the `blocked_route`. This will be the route that inputs similar to the blocked_references will be routed to. Ex: `Route(name=, references=)`
 - define the router using the `SemanticRouter` from redisvl. Ex: `SemanticRouter(name=, vectorizer= routes=[], redis_url=REDIS_URL, overwrite=True)`
 
-Run `python oregon_trail.py` to see if you pass
+Run `test_trail_agent` to see if you pass
 
 If this passes open `localhost:8001` and see the route records stored within the database.
 

@@ -5,7 +5,13 @@ from langgraph.graph import END, StateGraph
 from langgraph.prebuilt import (
     tools_condition,  # this is the checker for the if you got a tool back
 )
-from participant_agent.utils.nodes import call_tool_model, tool_node
+
+from participant_agent.utils.nodes import (
+    call_tool_model,
+    is_multi_choice,
+    multi_choice_structured,
+    tool_node,
+)
 from participant_agent.utils.state import AgentState
 
 load_dotenv()
