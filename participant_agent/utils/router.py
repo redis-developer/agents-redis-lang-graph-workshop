@@ -10,7 +10,7 @@ REDIS_URL = os.environ.get("REDIS_URL", "redis://host.docker.internal:6379/0")
 
 # Semantic router
 blocked_references = [
-    "thinks about aliens",
+    "things about aliens",
     "corporate questions about agile",
     "anything about the S&P 500",
 ]
