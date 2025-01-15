@@ -1,7 +1,10 @@
 import os
 
+from dotenv import load_dotenv
 from redisvl.extensions.router import Route, SemanticRouter
 from redisvl.utils.vectorize import HFTextVectorizer
+
+load_dotenv()
 
 REDIS_URL = os.environ.get("REDIS_URL", "redis://host.docker.internal:6379/0")
 
