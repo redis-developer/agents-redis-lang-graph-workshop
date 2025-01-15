@@ -142,8 +142,8 @@ Open [participant_agent/graph.py](./participant_agent/graph.py)
 
 ### Note: instructor will be going through this in detail if you get confused.
 
-- Uncomment lines 19-41
-- Delete line 42 (graph = None) - this is just a placeholder.
+- Uncomment lines 26-47
+- Delete line 48 (graph = None) - this is just a placeholder.
 - Define node 1, the agent, by passing a label `"agent"` and the code to execute at that node `call_tool_model`
 - Define node 2, the tool node, by passing the label `"tools"` and the code to be executed at that node `tool_node`
 - Set the entrypoint for your graph at `"agent"`
