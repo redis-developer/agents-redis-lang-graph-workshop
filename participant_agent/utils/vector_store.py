@@ -7,7 +7,7 @@ from langchain_redis import RedisConfig, RedisVectorStore
 
 load_dotenv()
 
-REDIS_URL = os.environ.get("REDIS_URL", "redis://host.docker.internal:6379/0")
+REDIS_URL = os.environ.get("REDIS_URL", "redis://localhost:6379/0")
 INDEX_NAME = os.environ.get("VECTOR_INDEX_NAME", "oregon_trail")
 
 config = RedisConfig(index_name=INDEX_NAME, redis_url=REDIS_URL)
