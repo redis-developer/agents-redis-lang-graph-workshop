@@ -96,8 +96,14 @@ Note: you can see the details of each scenario question/answer in [questions.jso
 
 ## Testing progress
 
-To test progress along the trail save the following alias:
+To test progress along the trail save the following alias in a pretty format use:
 
+```bash
+pytest --disable-warnings -vv -rP test_participant_oregon_trail.py
+```
+
+
+If you're on mac/linux you can save this as an alias so you don't have to keep the whole thing.
 ```bash
 alias test_trail_agent="pytest --disable-warnings -vv -rP test_participant_oregon_trail.py"
 ```

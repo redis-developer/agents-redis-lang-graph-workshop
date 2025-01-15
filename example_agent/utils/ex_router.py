@@ -6,7 +6,7 @@ from redisvl.utils.vectorize import HFTextVectorizer
 
 load_dotenv()
 
-REDIS_URL = os.environ.get("REDIS_URL", "redis://host.docker.internal:6379/0")
+REDIS_URL = os.environ.get("REDIS_URL", "redis://localhost:6379/0")
 
 # Semantic router
 blocked_references = [

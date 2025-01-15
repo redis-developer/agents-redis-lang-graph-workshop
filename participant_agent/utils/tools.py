@@ -12,7 +12,7 @@ from .vector_store import get_vector_store
 
 load_dotenv()
 
-REDIS_URL = os.environ.get("REDIS_URL", "redis://host.docker.internal:6379/0")
+REDIS_URL = os.environ.get("REDIS_URL", "redis://localhost:6379/0")
 
 
 @tool
