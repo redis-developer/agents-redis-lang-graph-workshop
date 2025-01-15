@@ -148,8 +148,8 @@ Open [participant_agent/graph.py](./participant_agent/graph.py)
 
 ### Note: instructor will be going through this in detail if you get confused.
 
-- Uncomment lines 19-41
-- Delete line 42 (graph = None) - this is just a placeholder.
+- Uncomment lines 26-47
+- Delete line 48 (graph = None) - this is just a placeholder.
 - Define node 1, the agent, by passing a label `"agent"` and the code to execute at that node `call_tool_model`
 - Define node 2, the tool node, by passing the label `"tools"` and the code to be executed at that node `tool_node`
 - Set the entrypoint for your graph at `"agent"`
@@ -179,7 +179,7 @@ Ex: `restock formula tool used specifically for calculating the amount of food a
 
 ### Scenario 2 sub-problem: structured output
 
-At this stage, you may that your agent is returning a "correct" answer to the question but not in the **format** the test script expects. The test script expects answers to multiple choice questions to be the single character "A", "B", "C", or "D". This may seem contrived, but often in production scenarios agents will be expected to work with existing deterministic systems that will require specific schemas. For this reason, LangChain supports an LLM call `with_structured_output` so that response can come from a predictable structure.
+At this stage, you may notice that your agent is returning a "correct" answer to the question but not in the **format** the test script expects. The test script expects answers to multiple choice questions to be the single character "A", "B", "C", or "D". This may seem contrived, but often in production scenarios agents will be expected to work with existing deterministic systems that will require specific schemas. For this reason, LangChain supports an LLM call `with_structured_output` so that response can come from a predictable structure.
 
 ### Steps:
 - Open [participant_agent/utils/state.py](participant_agent/utils/state.py) and uncomment the multi_choice_response attribute on the state parameter. To this point our state has only had one attribute called `messages` but we are adding a specific field that we will add structured outputs to.
