@@ -148,6 +148,8 @@ Open [participant_agent/graph.py](./participant_agent/graph.py)
 
 ### Note: instructor will be going through this in detail if you get confused.
 
+> To see an example of creating a graph and adding a node, see the [LangGraph docs](https://langchain-ai.github.io/langgraph/tutorials/introduction/#part-1-build-a-basic-chatbot)
+
 - Uncomment lines 26-47
 - Delete line 48 (graph = None) - this is just a placeholder.
 - Define node 1, the agent, by passing a label `"agent"` and the code to execute at that node `call_tool_model`
@@ -171,6 +173,9 @@ On the trail, you may have to do some planning in regards to how much food you w
 **Options**: [A: 100lbs, B: 20lbs, C: 5lbs, D: 80lbs] <br>
 
 ### Steps:
+> For an example on creating a tool, see the [LangChain docs](https://python.langchain.com/docs/how_to/custom_tools/)
+
+> If you've not used types with Python before, [see the Pydantic docs](https://docs.pydantic.dev/latest/concepts/fields/)
 - Open [participant_agent/utils/tools.py](./participant_agent/utils/tools.py) update the restock-tool description with a meaningful doc_string that provides context for the LLM.
 Ex: `restock formula tool used specifically for calculating the amount of food at which you should start restocking.`
 - Implement the restock formula: `(daily_usage * lead_time) + safety_stock`
