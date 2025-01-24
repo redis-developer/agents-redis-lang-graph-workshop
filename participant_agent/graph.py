@@ -14,7 +14,7 @@ load_dotenv()
 
 # The graph config can be updated with LangGraph Studio which can be helpful
 class GraphConfig(TypedDict):
-    model_name: Literal["openai"]  # could add more LLM providers here
+    model_name: Literal["openai", "ollama"]  # could add more LLM providers here
 
 
 # Define the function that determines whether to continue or not
