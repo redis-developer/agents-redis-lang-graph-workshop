@@ -150,15 +150,15 @@ Open [participant_agent/graph.py](./participant_agent/graph.py)
 
 > To see an example of creating a graph and adding a node, see the [LangGraph docs](https://langchain-ai.github.io/langgraph/tutorials/introduction/#part-1-build-a-basic-chatbot)
 
-- Uncomment lines 26-47
-- Delete line 48 (graph = None) - this is just a placeholder.
+- Uncomment boilerplate (below the first TODO)
+- Delete `graph = None` at the bottom of the file - this is just a placeholder.
 - Define node 1, the agent, by passing a label `"agent"` and the code to execute at that node `call_tool_model`
 - Define node 2, the tool node, by passing the label `"tools"` and the code to be executed at that node `tool_node`
 - Set the entrypoint for your graph at `"agent"`
 - Add a **conditional edge** with label `"agent"` and function `tools_condition`
 - Add a normal edge between `"tools"` and `"agent"`
 
-Run `test_trail_agent` to see if you pass the first scenario.
+Run `test_trail_agent` if you saved the alias or `pytest --disable-warnings -vv -rP test_participant_oregon_trail.py` to see if you pass the first scenario.
 
 If you didn't pass the first test **ask for help!**.
 
@@ -187,27 +187,28 @@ Ex: `restock formula tool used specifically for calculating the amount of food a
 At this stage, you may notice that your agent is returning a "correct" answer to the question but not in the **format** the test script expects. The test script expects answers to multiple choice questions to be the single character "A", "B", "C", or "D". This may seem contrived, but often in production scenarios agents will be expected to work with existing deterministic systems that will require specific schemas. For this reason, LangChain supports an LLM call `with_structured_output` so that response can come from a predictable structure.
 
 ### Steps:
-- Open [participant_agent/utils/state.py](participant_agent/utils/state.py) and uncomment the multi_choice_response attribute on the state parameter. To this point our state has only had one attribute called `messages` but we are adding a specific field that we will add structured outputs to.
-    - also observe the defined pydantic model in this file for our output
-- Open [participant_agent/utils/nodes.py](participant_agent/utils/nodes.py) and pass the pydantic class defined in state to the `with_structured_output` function
+- Open [participant_agent/utils/state.py](participant_agent/utils/state.py) and uncomment the multi_choice_response attribute on the state parameter and delete the pass statement. Up to this point our state had only one attribute called `messages` but we are adding a specific field for our structured multi-choice response.
+    - Also observe the defined `pydantic` model in this file for our output
+- Open [participant_agent/utils/nodes.py](participant_agent/utils/nodes.py) and pass the pydantic class defined in state to the `with_structured_output` function.
 - Update the graph to support a more advanced flow (see image below)
-    - Add a node for our `multi_choice_structured` this takes the messages after our tool calls and uses an LLM to format as we expect.
-    - Add a conditional edge after the agent that determines if a multi-choice formatting is appropriate (see example)
-    - Update the `is_multi_choice` function in the nodes file to return the appropriate strings
-    - Add an edge that goes from `multi_choice_structured` to `END`
+    - Add a node called `structure_response` and pass it the `structure_response` function.
+        - This function determines if the question is multiple choice. If yes, it use the with_structured_output model you updated. If no, it returns directly to end.
+    - Add a conditional edge utilizing the `should_continue` function defined for you in the file (See example below).
+    - Finally, add an edge that goes from `structure_response` to `END`
 
 ### Conditional edge example:
 
 ```python
 workflow.add_conditional_edges(
     "agent",
-    is_multi_choice, # function in nodes that returns a string ["multi-choice", "not-multi-choice"]
-    {"multi-choice": "multi_choice_structured", "not-multi-choice": END}, # based on the string returned from the function instructs graph to route to a given node
+    should_continue,
+    {"continue": "tools", "structure_response": "structure_response"},
 )
 ```
 
 ### Visual of your updated graph:
-![multi_choice](images/multi_choice_graph.png)<br>
+
+![multi_choice](images/multi_graph.png)<br>
 
 Run `test_trail_agent` to see if you pass
 

@@ -59,12 +59,17 @@ def multi_choice_structured(state: AgentState, config):
     }
 
 
-# Logical function for next step in graph execution
+# determine how to structure final response
 def is_multi_choice(state: AgentState):
-    if "options:" in state["messages"][0].content.lower():
-        return "multi-choice"
+    return "options:" in state["messages"][0].content.lower()
+
+
+def structure_response(state: AgentState, config):
+    if is_multi_choice(state):
+        return multi_choice_structured(state, config)
     else:
-        return "not-multi-choice"
+        # if not multi-choice don't need to do anything
+        return {"messages": []}
 
 
 ###
