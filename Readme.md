@@ -3,11 +3,17 @@
 </div>
 <br>
 
-# Oregon Trail Agent Workshop
+# Building AI Agents with Redis and LangGraph
 
-In this workshop, we are going to use [LangGraph](https://langchain-ai.github.io/langgraph/) to create a tool calling LLM agent that can survive a set of Oregon Trail themed scenarios. Additionally, we will setup and configure a semantic cache, allow/block list router, and a vector retrieval tool. The final architecture will look like this:
+In this workshop, we're using [LangGraph](https://langchain-ai.github.io/langgraph/) to create a tool-calling, LLM-based agent that can survive a set of Oregon Trail-themed scenarios. Additionally, we will setup and configure a semantic cache, allow/block list router, and a vector retrieval tool. The final architecture will look like this:
 
 ![arch](images/architecture.png)
+
+# Background
+
+This workshop demonstrates AI agents by referencing a classic American video game known as "The Oregon Trail". Originally a text-based adventure game taking place in the mid-1800s USA, the goal of the game was to safely travel from Missouri to Oregon by wagon without succumbing to various threats and diseases.
+
+One of the game's well known lines, "You have died of dysentery," inspired this workshop's original title, "Dodging Dysentery with AI".
 
 # Pre-requisites
 
