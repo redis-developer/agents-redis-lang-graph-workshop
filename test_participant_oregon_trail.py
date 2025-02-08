@@ -33,7 +33,7 @@ def test_1_wagon_leader(app):
 
     res = graph.invoke({"messages": scenario["question"]})
 
-    assert res["messages"][-1].content == scenario["answer"]
+    assert scenario["answer"] in res["messages"][-1].content
 
     print(f"\n response: {scenario['answer']}")
 

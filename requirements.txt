@@ -1,7 +1,7 @@
 langgraph==0.2.56
 langchain==0.3.13
 langchain-openai==0.2.3
-langchain-ollama==0.2.2
+langchain-ollama==0.2.3
 langchain-redis==0.1.1
 pydantic==2.9.2
 python-dotenv==1.0.1

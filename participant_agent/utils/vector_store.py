@@ -12,45 +12,29 @@ REDIS_URL = os.environ.get("REDIS_URL", "redis://localhost:6379/0")
 INDEX_NAME = os.environ.get("VECTOR_INDEX_NAME", "oregon_trail")
 
 config = RedisConfig(index_name=INDEX_NAME, redis_url=REDIS_URL)
+redis_client = Redis.from_url(REDIS_URL)
 
 doc = Document(
     page_content="the northern trail, of the blue mountains, was destroyed by a flood and is no longer safe to traverse. It is recommended to take the southern trail although it is longer."
 )
 
+# TODO: participant can change to whatever desired model
+embedding_model = OpenAIEmbeddings() 
+
+def _clean_existing(prefix):
+    for key in redis_client.scan_iter(f"{prefix}:*"):
+        redis_client.delete(key)
 
 def get_vector_store():
-    if os.environ.get("MODEL_NAME") == "ollama":
-        return __get_ollama_vector_store()
-    elif os.environ.get("MODEL_NAME") == "openai":
-        return __get_openai_vector_store()
-
-def __check_existing_embedding(vector_store):
-    results = vector_store.similarity_search(doc, k=1)
-    if not results:
-        raise Exception("Required content not found in existing store")
-
-def __get_ollama_vector_store():
     try:
         config.from_existing = True
-        vector_store = RedisVectorStore(OllamaEmbeddings(model="llama3"), config=config)
-        __check_existing_embedding(vector_store)
+        vector_store = RedisVectorStore(embedding_model, config=config)
     except:
         print("Init vector store with document")
+        print("Clean any existing data in index")
+        _clean_existing(config.index_name)
         config.from_existing = False
 
-        # TODO: define vector store for ollama 
-        vector_store = None
-    return vector_store
-
-def __get_openai_vector_store():
-    try:
-        config.from_existing = True
-        vector_store = RedisVectorStore(OpenAIEmbeddings(), config=config)
-        __check_existing_embedding(vector_store)
-    except:
-        print("Init vector store with document")
-        config.from_existing = False
-
-        # TODO: define vector store for openai
+        # TODO: define vector store
         vector_store = None
     return vector_store

@@ -72,17 +72,10 @@ def structure_response(state: AgentState, config):
         # if not multi-choice don't need to do anything
         return {"messages": []}
 
-if environ_model_name == "openai":
-    system_prompt = """
-        You are an oregon trail playing tool calling AI agent. Use the tools available to you to answer the question you are presented. When in doubt use the tools to help you find the answer.
-        If anyone asks your first name is Art return just that string.
-    """
-elif environ_model_name == "ollama":
-    system_prompt = """
-    OREGON TRAIL GAME INSTRUCTIONS:
-    YOU MUST STRICTLY FOLLOW THIS RULE:
-    When someone asks "What is the first name of the wagon leader?", your ENTIRE response must ONLY be the word: Art
-    """
+system_prompt = """
+    You are an oregon trail playing tool calling AI agent. Use the tools available to you to answer the question you are presented. When in doubt use the tools to help you find the answer.
+    If anyone asks your first name is Art return just that string.
+"""
 
 # Define the function that calls the model
 def call_tool_model(state: AgentState, config):

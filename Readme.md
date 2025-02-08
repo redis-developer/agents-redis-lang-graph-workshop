@@ -18,7 +18,7 @@ In this workshop, we are going to use [LangGraph](https://langchain-ai.github.io
 - [openai api key](https://platform.openai.com/docs/quickstart)
 
 ## (Optional) Ollama
-This workshop is optimized to run targeting OpenAI models. If you prefer to run locally however, you may do so via Ollama. 
+This workshop is optimized to run targeting OpenAI models. If you prefer to run locally however, you may do so via the experimental Ollama configuration. 
 * [Ollama setup instructions](Ollama.md)
 
 ## (Optional) helpers
@@ -239,12 +239,10 @@ In our scenario we want to be able to retrieve the time-bound information that t
 
 ### Steps:
 - Open [participant_agent/utils/vector_store.py](participant_agent/utils/vector_store.py)
-- Find the corresponding `get_vector_store` method either for openai or ollama 
-- If using openai: where `vector_store=None` update to `vector_store = RedisVectorStore.from_documents(<docs>, <embedding_model>, config=<config>)` with the appropriate variables.
-
-> For `<embedding model>`, keep in mind whether you are using openai or ollama. If using ollama, the `model` parameter should be set to `nomic-embed-text` \
-[OpenAI embeddings](https://python.langchain.com/docs/integrations/text_embedding/openai/) \
+- Take note of how `embedding_model` is getting instantiated. If using Ollama then switch this for the appropriate embedding using `llama3.1` for the `model` parameter
+> [OpenAI embeddings](https://python.langchain.com/docs/integrations/text_embedding/openai/) \
 [Ollama embeddings](https://python.langchain.com/docs/integrations/text_embedding/ollama/)
+- Where `vector_store=None` update to `vector_store = RedisVectorStore.from_documents(<docs>, <embedding_model>, config=<config>)` with the appropriate variables.
 
 - Open [participant_agent/utils/tools.py](participant_agent/utils/tools.py)
     - Uncomment code for retrieval tool
