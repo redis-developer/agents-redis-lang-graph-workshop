@@ -13,7 +13,7 @@ from .ex_state import AgentState, MultipleChoiceResponse
 
 load_dotenv()
 
-environ_model_name = os.environ.get("MODEL_NAME")
+ENVIRON_MODEL_NAME = os.environ.get("MODEL_NAME")
 
 @lru_cache(maxsize=4)
 def _get_tool_model(model_name: str):
@@ -46,7 +46,7 @@ def multi_choice_structured(state: AgentState, config):
     # We call the model with structured output in order to return the same format to the user every time
     # state['messages'][-2] is the last ToolMessage in the convo, which we convert to a HumanMessage for the model to use
     # We could also pass the entire chat history, but this saves tokens since all we care to structure is the output of the tool
-    model_name = config.get("configurable", {}).get("model_name", environ_model_name)
+    model_name = config.get("configurable", {}).get("model_name", ENVIRON_MODEL_NAME)
 
     response = _get_response_model(model_name).invoke(
         [
@@ -72,10 +72,12 @@ def structure_response(state: AgentState, config):
         # if not multi-choice don't need to do anything
         return {"messages": []}
 
+
 system_prompt = """
     You are an oregon trail playing tool calling AI agent. Use the tools available to you to answer the question you are presented. When in doubt use the tools to help you find the answer.
     If anyone asks your first name is Art return just that string.
 """
+
 
 # Define the function that calls the model
 def call_tool_model(state: AgentState, config):
@@ -83,7 +85,7 @@ def call_tool_model(state: AgentState, config):
     messages = [{"role": "system", "content": system_prompt}] + state["messages"]
 
     # Get from LangGraph config
-    model_name = config.get("configurable", {}).get("model_name", environ_model_name)
+    model_name = config.get("configurable", {}).get("model_name", ENVIRON_MODEL_NAME)
 
     # Get our model that binds our tools
     model = _get_tool_model(model_name)
