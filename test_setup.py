@@ -2,11 +2,18 @@ import os
 
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
+from langchain_ollama import ChatOllama
 from redis import Redis
 
 load_dotenv()
 
-llm = ChatOpenAI(model="gpt-4o")
+if os.environ.get("MODEL_NAME") == "openai":
+    llm = ChatOpenAI(model="gpt-4o")
+elif os.environ.get("MODEL_NAME") == "ollama":
+    llm = ChatOllama(model="llama3.1")
+else:
+    raise Exception("Setup failed, MODEL_NAME not defined in .env")
+
 client = Redis.from_url(os.environ.get("REDIS_URL"))
 
 

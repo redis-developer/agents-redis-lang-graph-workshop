@@ -11,7 +11,7 @@ load_dotenv()
 
 # Define the config
 class GraphConfig(TypedDict):
-    model_name: Literal["anthropic", "openai"]
+    model_name: Literal["anthropic", "openai", "ollama"]
 
 
 # Define the function that determines whether to continue or not

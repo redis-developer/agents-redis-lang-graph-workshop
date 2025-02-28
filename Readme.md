@@ -23,6 +23,10 @@ One of the game's well known lines, "You have died of dysentery," inspired this 
 - [docker](https://docs.docker.com/get-started/get-docker/)
 - [openai api key](https://platform.openai.com/docs/quickstart)
 
+## (Optional) Ollama
+This workshop is optimized to run targeting OpenAI models. If you prefer to run locally however, you may do so via the experimental Ollama configuration. 
+* [Ollama setup instructions](Ollama.md)
+
 ## (Optional) helpers
 
 - [LangSmith](https://docs.smith.langchain.com/)
@@ -241,7 +245,11 @@ In our scenario we want to be able to retrieve the time-bound information that t
 
 ### Steps:
 - Open [participant_agent/utils/vector_store.py](participant_agent/utils/vector_store.py)
+- Take note of how `embedding_model` is getting instantiated. If using Ollama then switch this for the appropriate embedding using `llama3.1` for the `model` parameter
+> [OpenAI embeddings](https://python.langchain.com/docs/integrations/text_embedding/openai/) \
+[Ollama embeddings](https://python.langchain.com/docs/integrations/text_embedding/ollama/)
 - Where `vector_store=None` update to `vector_store = RedisVectorStore.from_documents(<docs>, <embedding_model>, config=<config>)` with the appropriate variables.
+
 - Open [participant_agent/utils/tools.py](participant_agent/utils/tools.py)
     - Uncomment code for retrieval tool
     - Update the create_retriever_tool to take the correct params. Ex: `create_retriever_tool(vector_store.as_retriever(), "get_directions", "meaningful doc string")`
