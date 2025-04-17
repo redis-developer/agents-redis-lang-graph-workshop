@@ -2,9 +2,10 @@ import os
 
 from dotenv import load_dotenv
 from langchain_core.documents import Document
-from langchain_openai import OpenAIEmbeddings
 from langchain_ollama import OllamaEmbeddings
+from langchain_openai import OpenAIEmbeddings
 from langchain_redis import RedisConfig, RedisVectorStore
+from redis import Redis
 
 load_dotenv()
 
@@ -19,11 +20,13 @@ doc = Document(
 )
 
 # TODO: participant can change to whatever desired model
-embedding_model = OpenAIEmbeddings() 
+embedding_model = OpenAIEmbeddings()
+
 
 def _clean_existing(prefix):
     for key in redis_client.scan_iter(f"{prefix}:*"):
         redis_client.delete(key)
+
 
 def get_vector_store():
     try:
