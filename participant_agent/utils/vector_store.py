@@ -15,7 +15,7 @@ INDEX_NAME = os.environ.get("VECTOR_INDEX_NAME", "oregon_trail")
 config = RedisConfig(index_name=INDEX_NAME, redis_url=REDIS_URL)
 redis_client = Redis.from_url(REDIS_URL)
 
-doc = Document(
+docs = Document(
     page_content="the northern trail, of the blue mountains, was destroyed by a flood and is no longer safe to traverse. It is recommended to take the southern trail although it is longer."
 )
 
