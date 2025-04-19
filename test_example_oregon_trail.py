@@ -1,9 +1,11 @@
+import sys
 import time
+
+print(f"Python version: {sys.version}")
 
 import pytest
 from langchain_core.messages import HumanMessage
 
-# from participant_agent.app import ParticipantApp
 from example_agent.ex_app import ExampleApp
 
 print("\n\n\n Welcome to the Oregon Trail! \n\n\n")

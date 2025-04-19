@@ -109,13 +109,13 @@ Note: you can see the details of each scenario question/answer in [questions.jso
 To test progress along the trail save the following alias in a pretty format use:
 
 ```bash
-pytest --disable-warnings -vv -rP test_participant_oregon_trail.py
+python -m pytest --disable-warnings -vv -rP test_participant_oregon_trail.py
 ```
 
 
 If you're on mac/linux you can save this as an alias so you don't have to keep the whole thing.
 ```bash
-alias test_trail_agent="pytest --disable-warnings -vv -rP test_participant_oregon_trail.py"
+alias test_trail_agent="python -m pytest --disable-warnings -vv -rP test_participant_oregon_trail.py"
 ```
 
 Then run `test_trail_agent` to invoke the workshop tests.
@@ -200,10 +200,10 @@ At this stage, you may notice that your agent is returning a "correct" answer to
 - Open [participant_agent/utils/state.py](participant_agent/utils/state.py) and uncomment the multi_choice_response attribute on the state parameter and delete the pass statement. Up to this point our state had only one attribute called `messages` but we are adding a specific field for our structured multi-choice response.
     - Also observe the defined `pydantic` model in this file for our output
 - Open [participant_agent/utils/nodes.py](participant_agent/utils/nodes.py) and pass the pydantic class defined in state to the `with_structured_output` function.
-- Update the graph to support a more advanced flow (see image below)
+- Open the graph file again ([participant_agent/graph.py](participant_agent/graph.py)) and update to support a more advanced flow:
     - Add a node called `structure_response` and pass it the `structure_response` function.
         - This function determines if the question is multiple choice. If yes, it use the with_structured_output model you updated. If no, it returns directly to end.
-    - Add a conditional edge utilizing the `should_continue` function defined for you in the file (See example below).
+    - Update the conditional edge utilizing to utilize the `should_continue` function defined for you in the file (See example below).
     - Finally, add an edge that goes from `structure_response` to `END`
 
 ### Conditional edge example:
@@ -246,8 +246,8 @@ In our scenario we want to be able to retrieve the time-bound information that t
 ### Steps:
 - Open [participant_agent/utils/vector_store.py](participant_agent/utils/vector_store.py)
 - Take note of how `embedding_model` is getting instantiated. If using Ollama then switch this for the appropriate embedding using `llama3.1` for the `model` parameter
-> [OpenAI embeddings](https://python.langchain.com/docs/integrations/text_embedding/openai/) \
-[Ollama embeddings](https://python.langchain.com/docs/integrations/text_embedding/ollama/)
+    - [OpenAI embeddings](https://python.langchain.com/docs/integrations/text_embedding/openai/) \
+    - [Ollama embeddings](https://python.langchain.com/docs/integrations/text_embedding/ollama/)
 - Where `vector_store=None` update to `vector_store = RedisVectorStore.from_documents(<docs>, <embedding_model>, config=<config>)` with the appropriate variables.
 
 - Open [participant_agent/utils/tools.py](participant_agent/utils/tools.py)

@@ -2,9 +2,10 @@ import os
 
 from dotenv import load_dotenv
 from langchain_core.documents import Document
-from langchain_openai import OpenAIEmbeddings
 from langchain_ollama import OllamaEmbeddings
+from langchain_openai import OpenAIEmbeddings
 from langchain_redis import RedisConfig, RedisVectorStore
+from redis import Redis
 
 load_dotenv()
 
@@ -14,16 +15,18 @@ INDEX_NAME = os.environ.get("VECTOR_INDEX_NAME", "oregon_trail")
 config = RedisConfig(index_name=INDEX_NAME, redis_url=REDIS_URL)
 redis_client = Redis.from_url(REDIS_URL)
 
-doc = Document(
+docs = Document(
     page_content="the northern trail, of the blue mountains, was destroyed by a flood and is no longer safe to traverse. It is recommended to take the southern trail although it is longer."
 )
 
 # TODO: participant can change to whatever desired model
-embedding_model = OpenAIEmbeddings() 
+embedding_model = OpenAIEmbeddings()
+
 
 def _clean_existing(prefix):
     for key in redis_client.scan_iter(f"{prefix}:*"):
         redis_client.delete(key)
+
 
 def get_vector_store():
     try:

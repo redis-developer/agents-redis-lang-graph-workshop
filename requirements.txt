@@ -7,3 +7,4 @@ pydantic==2.9.2
 python-dotenv==1.0.1
 sentence-transformers==2.7.0
 pytest==8.3.4
+redis==5.2.1
